@@ -25,11 +25,13 @@ namespace PromotionEngine.Core.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult GetProductCardTotal(IFormCollection collection)
         {
-            try
-			   {
-				 	var productCartModel = (HttpContext.Session.GetObject<ProductBuyModel>("productBuyModel")).productCartModel;
+			try
+			{
+				var productCartModel = (HttpContext.Session.GetObject<ProductBuyModel>("productBuyModel")).productCartModel;
+				if (ModelState.IsValid)
+				{
 					var productUnitCountValues = collection["item.productUnitcount"];
-				   var productCouponApplied = collection["Coupon"].ToArray().Length !=0 ? (collection["Coupon"].ToArray()[0]).ToString() : "";
+					var productCouponApplied = collection["Coupon"].ToArray().Length !=0 ? (collection["Coupon"].ToArray()[0]).ToString() : "";
 
 					int i= 0;
 					foreach (var item in productCartModel)
@@ -41,12 +43,17 @@ namespace PromotionEngine.Core.Controllers
 					var productBuyModel = new ProductCartLogic().CalculateTotalFromProductCart(productCartModel, productCouponApplied);
 					HttpContext.Session.SetObject("productBuyModel", productBuyModel);
 
-				   return RedirectToAction("GetAllProductsWithDetails", "ProductDetails");
+					return RedirectToAction("GetAllProductsWithDetails", "ProductDetails");
 				}
-            catch
-            {
-                return View();
-            }
+				else
+				{
+					return RedirectToAction("GetAllProductsWithDetails", "ProductDetails");
+				}
+			}
+			catch
+			{
+				return View();
+			}
         }
     }
 }

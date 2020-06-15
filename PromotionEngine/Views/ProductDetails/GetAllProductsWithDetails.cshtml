@@ -37,8 +37,8 @@
 							@Html.DisplayFor(modelItem => item.productUnitPrice)
 						</td>
 						<td>
-							@Html.TextBoxFor(modelItem => item.productUnitcount)
-							@Html.ValidationMessageFor(modelItem=> item.productUnitcount)
+							@Html.TextBoxFor(modelItem => item.productUnitcount, null, new { @type = "number", @min=0, @onkeypress = "return event.charCode >= 48" })
+							@Html.ValidationMessageFor(modelItem => item.productUnitcount)
 						</td>
 					</tr>
 				}
