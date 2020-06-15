@@ -1,10 +1,11 @@
-﻿using System;
+﻿using PromotionEngine.Logic.Models;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PromotionEngine.Logic.Logic.Interface
 {
-    public interface IProductPromotionLogic
-    {
-    }
+	public interface IProductPromotionLogic
+   {
+		List<ProductCouponModel> GetAllCouponsAvailable();
+		decimal CalculationLogic(List<ProductCartModel> productCartCollection, string productCouponApplied);
+	}
 }

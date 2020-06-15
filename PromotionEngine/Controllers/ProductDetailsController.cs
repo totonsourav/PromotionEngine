@@ -1,96 +1,43 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
 using PromotionEngine.Logic.Logic.Implementation;
+using PromotionEngine.Logic.Models;
+using PromotionEngine.Core.Utility;
 
 namespace PromotionEngine.Core.Controllers
 {
+	/// <summary>
+	/// This controller includes all the functions related to the products details which the user will 
+	/// able to see in the Product Details Page
+	/// </summary>
 	public class ProductDetailsController : Controller
-    {
-		  ProductDetailsLogic productDetailsLogic = null;
+	{
+		ProductDetailsLogic productDetailsLogic = null;
 
-		  // GET: ProductDetails
-		  [HttpGet]
-        public ActionResult GetAllProductsWithDetails()
-        {
-			   productDetailsLogic = new ProductDetailsLogic();
-			   var productDetails =  productDetailsLogic.GetAllProductsWithDetails();
+		/// <summary>
+		/// Get all the product details in the Product Details page
+		/// </summary>
+		/// <returns></returns>
+		// GET: ProductDetails
+		[HttpGet]
+		public ActionResult GetAllProductsWithDetails()
+		{
+			ProductBuyModel productBuyModel = null;
 
-				return View(productDetails);
-        }
+			// When the application gets loaded for the first time, then, it will retrieve from the mock data/database
+			// but will get retrieved from the session, when the user has selected the product units and 
+			// wanted to check their total invoice amount
+			if (HttpContext.Session.GetObject<ProductBuyModel>("productBuyModel") != null)
+				productBuyModel = (HttpContext.Session.GetObject<ProductBuyModel>("productBuyModel"));
+			else
+			{
+				productDetailsLogic = new ProductDetailsLogic();
+				productBuyModel = productDetailsLogic.GetAllProductsWithDetails();
+				HttpContext.Session.SetObject("productBuyModel", productBuyModel);
+			}
 
-		  // GET: ProductDetails/Details/5
-		  [HttpGet]
-		  public ActionResult GetProductDetails(int id)
-        {
-            return View();
-        }
-
-        // GET: ProductDetails/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: ProductDetails/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create(IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        // TODO: Add insert logic here
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-
-        //// GET: ProductDetails/Edit/5
-        //public ActionResult Edit(int id)
-        //{
-        //    return View();
-        //}
-
-        //// POST: ProductDetails/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        // TODO: Add update logic here
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-
-        //// GET: ProductDetails/Delete/5
-        //public ActionResult Delete(int id)
-        //{
-        //    return View();
-        //}
-
-        //// POST: ProductDetails/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Delete(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        // TODO: Add delete logic here
-
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-    }
+			return View(productBuyModel);
+		}
+	}
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,8 +22,16 @@ namespace PromotionEngine
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
-        }
+				services.AddMemoryCache();
+			  
+			   services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
+			   services.AddSession(options => {
+				options.IdleTimeout = TimeSpan.FromMinutes(1);
+			   });
+
+			   services.AddDistributedMemoryCache();
+			   services.AddMvc();
+		}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -36,15 +45,18 @@ namespace PromotionEngine
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+			 
+			   app.UseStaticFiles();
+			   app.UseCookiePolicy();
+			   app.UseSession();
 
-            app.UseStaticFiles();
-
-            app.UseMvc(routes =>
+  			   app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=ProductDetails}/{action=GetAllProductsWithDetails}/{id?}");
+                    template: "{controller=ProductDetails}/{action=GetAllProductsWithDetails}/{productBuyModel?}");
             });
-        }
+			 
+		}
     }
 }

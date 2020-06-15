@@ -1,10 +1,10 @@
-﻿using System;
+﻿using PromotionEngine.Logic.Models;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PromotionEngine.Logic.Logic.Interface
 {
-    public interface IProductCartLogic
-    {
-    }
+	public interface IProductCartLogic
+	 {
+		ProductBuyModel CalculateTotalFromProductCart(List<ProductCartModel> productCartCollection, string productCouponApplied);	
+	 }
 }
